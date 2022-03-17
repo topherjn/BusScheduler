@@ -8,6 +8,7 @@ import com.example.busschedule.database.schedule.Schedule
 import com.example.busschedule.database.schedule.ScheduleDao
 
 @Database(entities = arrayOf(Schedule::class), version = 1)
+
 abstract class AppDatabase: RoomDatabase() {
 
     abstract fun scheduleDao(): ScheduleDao
