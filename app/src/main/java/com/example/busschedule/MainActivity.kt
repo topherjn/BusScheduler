@@ -15,15 +15,22 @@
  */
 package com.example.busschedule
 
+import android.Manifest
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.busschedule.databinding.ActivityMainBinding
+import android.location.Location
+import android.widget.Button
+import android.widget.TextView
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import com.google.android.gms.location.*
 
 class MainActivity : AppCompatActivity() {
-
     private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
