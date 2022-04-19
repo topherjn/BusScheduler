@@ -16,7 +16,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.*
 
 
@@ -27,25 +26,13 @@ private const val ARG_PARAM2 = "param2"
 
 class LocationFragment : Fragment() {
 
-
     private var gpsButton: Button? = null
     private var arrondissementTextView: TextView? = null
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
     private var fusedLocationProviderClient: FusedLocationProviderClient? = null
     private var locationRequest: LocationRequest? = null
     private var locationCallback: LocationCallback? = null
     private var isTracking = false
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -60,28 +47,25 @@ class LocationFragment : Fragment() {
 
         gpsButton = requireView().findViewById(R.id.getLocationButton)
         arrondissementTextView = requireView().findViewById(R.id.arrondissementTextView)
-        arrondissementTextView!!.text = "20"
+        arrondissementTextView!!.text = null
 
         gpsButton!!.setOnClickListener { startLocationUpdates() }
 
-        val action = LocationFragmentDirections.actionLocationFragmentToFullScheduleFragment(arrondissementTextView!!.text.toString().toInt())
-        arrondissementTextView!!.setOnClickListener { view -> view.findNavController().navigate(action)}
     }
 
     private fun startLocationUpdates() {
 
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext())
         locationRequest = LocationRequest.create()
         locationRequest!!.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        locationRequest!!.interval = 1000
-        locationRequest!!.fastestInterval = 500
+        locationRequest!!.interval = 5000
+        locationRequest!!.fastestInterval = 1000
         locationRequest!!.isWaitForAccurateLocation = true
         locationRequest!!.smallestDisplacement = 0f
 
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 for (location in locationResult.locations) {
-                    Toast.makeText(requireContext(), location.toString(), Toast.LENGTH_LONG).show()
                     updateLocationTextBox(location)
                 }
             }
@@ -111,7 +95,7 @@ class LocationFragment : Fragment() {
         fusedLocationProviderClient!!.requestLocationUpdates(
             locationRequest!!,
             locationCallback!!,
-            Looper.myLooper()!!
+            Looper.getMainLooper()!!
         )
         Log.d("TAG", "looper")
         isTracking = true
@@ -140,6 +124,9 @@ class LocationFragment : Fragment() {
         } catch (e: Exception) {
             arrondissementTextView!!.text = getString(R.string.location_unavailable)
         }
+
+        val action = LocationFragmentDirections.actionLocationFragmentToFullScheduleFragment(arrondissementTextView!!.text.toString().toInt())
+        arrondissementTextView!!.setOnClickListener { view -> view.findNavController().navigate(action)}
     }
 
     override fun onResume() {
