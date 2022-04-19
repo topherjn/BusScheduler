@@ -19,12 +19,11 @@ buildscript {
     ext {
         kotlin_version = "1.6.20"
         nav_version = '2.4.2'
-        room_version = '2.4.2'
+        room_version = '2.4.0-beta01'
     }
     repositories {
         mavenCentral()
         google()
-        jcenter()
     }
     dependencies {
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
@@ -39,7 +38,7 @@ buildscript {
 allprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
 }
 

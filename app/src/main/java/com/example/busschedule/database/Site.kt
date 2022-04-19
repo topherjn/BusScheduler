@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class Site (
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     val siteId: Int,
     @NonNull @ColumnInfo(name="site_name") val siteName: String,
     @NonNull @ColumnInfo val arrondissement: Int,
