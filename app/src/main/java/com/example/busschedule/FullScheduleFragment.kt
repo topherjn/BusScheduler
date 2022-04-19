@@ -20,9 +20,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.busschedule.databinding.FullScheduleFragmentBinding
+import com.example.busschedule.viewmodels.SiteViewModel
+import com.example.busschedule.viewmodels.SiteViewModelFactory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class FullScheduleFragment: Fragment() {
 
@@ -31,6 +38,10 @@ class FullScheduleFragment: Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var recyclerView: RecyclerView
+
+    private val viewModel: SiteViewModel by activityViewModels {
+        SiteViewModelFactory((activity?.application as SiteApplication).database.siteDao())
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,7 +57,20 @@ class FullScheduleFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
         recyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        val siteAdapter = SiteAdapter({
+            val action = FullScheduleFragmentDirections.actionFullScheduleFragmentToStopScheduleFragment(
+                stopName = it.siteName
+            )
+            view.findNavController().navigate(action)
+        })
+        recyclerView.adapter = siteAdapter
+
+        GlobalScope.launch(Dispatchers.IO) {
+            siteAdapter.submitList(viewModel.getSites(18))
+        }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
