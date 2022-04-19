@@ -18,7 +18,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/locationFragment">
-
+    <fragment
+        android:id="@+id/locationFragment"
+        android:name="com.example.busschedule.LocationFragment"
+        android:label="fragment_location"
+        tools:layout="@layout/fragment_location" >
+        <action
+            android:id="@+id/action_locationFragment_to_fullScheduleFragment"
+            app:destination="@id/fullScheduleFragment" />
+    </fragment>
     <fragment
         android:id="@+id/fullScheduleFragment"
         android:name="com.example.busschedule.FullScheduleFragment"
@@ -26,7 +34,11 @@
         tools:layout="@layout/full_schedule_fragment">
         <action
             android:id="@+id/action_fullScheduleFragment_to_stopScheduleFragment"
-            app:destination="@id/stopScheduleFragment" />
+            app:destination="@id/stopScheduleFragment">
+        </action>
+        <argument
+            android:name="arrondissement"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/stopScheduleFragment"
@@ -37,13 +49,5 @@
             android:name="stopName"
             app:argType="string" />
     </fragment>
-    <fragment
-        android:id="@+id/locationFragment"
-        android:name="com.example.busschedule.LocationFragment"
-        android:label="fragment_location"
-        tools:layout="@layout/fragment_location" >
-        <action
-            android:id="@+id/action_locationFragment_to_fullScheduleFragment"
-            app:destination="@id/fullScheduleFragment" />
-    </fragment>
+
 </navigation>

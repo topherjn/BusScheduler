@@ -60,11 +60,11 @@ class LocationFragment : Fragment() {
 
         gpsButton = requireView().findViewById(R.id.getLocationButton)
         arrondissementTextView = requireView().findViewById(R.id.arrondissementTextView)
-        arrondissementTextView!!.text = "99"
+        arrondissementTextView!!.text = "20"
 
         gpsButton!!.setOnClickListener { startLocationUpdates() }
 
-        val action = LocationFragmentDirections.actionLocationFragmentToFullScheduleFragment()
+        val action = LocationFragmentDirections.actionLocationFragmentToFullScheduleFragment(arrondissementTextView!!.text.toString().toInt())
         arrondissementTextView!!.setOnClickListener { view -> view.findNavController().navigate(action)}
     }
 

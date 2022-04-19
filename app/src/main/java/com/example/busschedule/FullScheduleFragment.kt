@@ -40,8 +40,18 @@ class FullScheduleFragment: Fragment() {
 
     private lateinit var recyclerView: RecyclerView
 
+    private  var arrondissement: Int = 0
+
     private val viewModel: SiteViewModel by activityViewModels {
         SiteViewModelFactory((activity?.application as SiteApplication).database.siteDao())
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        arguments?.let {
+            arrondissement = it.getInt("arrondissement")
+        }
     }
 
     override fun onCreateView(
@@ -59,16 +69,17 @@ class FullScheduleFragment: Fragment() {
         recyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        val siteAdapter = SiteAdapter({
-            val action = FullScheduleFragmentDirections.actionFullScheduleFragmentToStopScheduleFragment(
-                stopName = it.siteName
-            )
+        val siteAdapter = SiteAdapter {
+            val action =
+                FullScheduleFragmentDirections.actionFullScheduleFragmentToStopScheduleFragment(
+                    stopName = it.siteName
+                )
             view.findNavController().navigate(action)
-        })
+        }
         recyclerView.adapter = siteAdapter
 
         lifecycle.coroutineScope.launch {
-            viewModel.getSites(18).collect() {
+            viewModel.getSites(arrondissement).collect() {
                 siteAdapter.submitList(it)
             }
         }
