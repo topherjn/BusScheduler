@@ -19,6 +19,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.coroutineScope
@@ -68,6 +69,8 @@ class FullScheduleFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
         recyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        (activity as AppCompatActivity).supportActionBar?.title = "Sites"
 
         val siteAdapter = SiteAdapter {
             val action =

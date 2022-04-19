@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.navigation.findNavController
 import com.google.android.gms.location.*
@@ -45,9 +46,12 @@ class LocationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        (activity as AppCompatActivity).supportActionBar?.title = "Arrondissement"
         gpsButton = requireView().findViewById(R.id.getLocationButton)
         arrondissementTextView = requireView().findViewById(R.id.arrondissementTextView)
         arrondissementTextView!!.text = null
+
+
 
         gpsButton!!.setOnClickListener { startLocationUpdates() }
 
@@ -110,6 +114,7 @@ class LocationFragment : Fragment() {
 
     private fun updateLocationTextBox(lastLocation: Location) {
         val geocoder = Geocoder(getContext())
+
         try {
             val addresses =
                 geocoder.getFromLocation(lastLocation.latitude, lastLocation.longitude, 1)
@@ -118,15 +123,19 @@ class LocationFragment : Fragment() {
                 postalCode = postalCode.substring(postalCode.length - 2)
                 if (postalCode[0] == '0') postalCode = postalCode.substring(postalCode.length - 1)
             }
-            arrondissementTextView!!.text = postalCode
+            var arrondissement = postalCode.toInt()
+            if(arrondissement > 20) arrondissement = arrondissement.mod(20) + 1
+
+            arrondissementTextView!!.text = arrondissement.toString()
             arrondissementTextView!!.isEnabled = true
+            val action = LocationFragmentDirections.actionLocationFragmentToFullScheduleFragment(arrondissement)
+            arrondissementTextView!!.setOnClickListener { view -> view.findNavController().navigate(action)}
             fusedLocationProviderClient!!.removeLocationUpdates(locationCallback!!)
         } catch (e: Exception) {
             arrondissementTextView!!.text = getString(R.string.location_unavailable)
         }
 
-        val action = LocationFragmentDirections.actionLocationFragmentToFullScheduleFragment(arrondissementTextView!!.text.toString().toInt())
-        arrondissementTextView!!.setOnClickListener { view -> view.findNavController().navigate(action)}
+
     }
 
     override fun onResume() {
