@@ -19,14 +19,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FullScheduleFragment"
+    tools:context=".SiteListFragment"
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/bus_stop_header"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/bus_stop_header"
+        android:text="@string/site_header"
         android:textSize="16sp"
         android:gravity="center_horizontal"
         android:padding="8dp"

@@ -19,30 +19,36 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.coroutineScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.busschedule.databinding.StopScheduleFragmentBinding
+import com.example.busschedule.databinding.SiteListFragmentBinding
+import com.example.busschedule.viewmodels.SiteViewModel
+import com.example.busschedule.viewmodels.SiteViewModelFactory
+import kotlinx.coroutines.launch
 
-class StopScheduleFragment: Fragment() {
+class SiteListFragment: Fragment() {
 
-    companion object {
-        var STOP_NAME = "stopName"
-    }
-
-    private var _binding: StopScheduleFragmentBinding? = null
+    private var _binding: SiteListFragmentBinding? = null
 
     private val binding get() = _binding!!
 
     private lateinit var recyclerView: RecyclerView
 
-    private lateinit var stopName: String
+    private  var arrondissement: Int = 0
+
+    private val viewModel: SiteViewModel by activityViewModels {
+        SiteViewModelFactory((activity?.application as SiteApplication).database.siteDao())
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         arguments?.let {
-            stopName = it.getString(STOP_NAME).toString()
+            arrondissement = it.getInt("arrondissement")
         }
     }
 
@@ -50,16 +56,27 @@ class StopScheduleFragment: Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        _binding = StopScheduleFragmentBinding.inflate(inflater, container, false)
-        val view = binding.root
-        return view
+    ): View {
+        _binding = SiteListFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         recyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        (activity as AppCompatActivity).supportActionBar?.title = "Sites"
+
+        val siteAdapter = SiteAdapter {}
+
+        recyclerView.adapter = siteAdapter
+
+        lifecycle.coroutineScope.launch {
+            viewModel.getSites(arrondissement).collect {
+                siteAdapter.submitList(it)
+            }
+        }
     }
 
     override fun onDestroyView() {

@@ -15,7 +15,7 @@
 <resources>
     <string name="app_name">Oozh Mutroov</string>
     <!-- Shown above left column listing bus stops in full schedule fragment -->
-    <string name="bus_stop_header">Site</string>
+    <string name="site_header">Site</string>
     <!-- Shown above right column listing arrival times in full schedule fragment -->
     <string name="arrival_time_header">Site</string>
     <string name="dummy_button">Dummy Button</string>
