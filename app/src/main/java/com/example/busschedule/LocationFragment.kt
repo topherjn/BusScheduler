@@ -19,12 +19,6 @@ import androidx.core.app.ActivityCompat
 import androidx.navigation.findNavController
 import com.google.android.gms.location.*
 
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
 class LocationFragment : Fragment() {
 
     private var gpsButton: Button? = null
@@ -51,10 +45,7 @@ class LocationFragment : Fragment() {
         arrondissementTextView = requireView().findViewById(R.id.arrondissementTextView)
         arrondissementTextView!!.text = null
 
-
-
         gpsButton!!.setOnClickListener { startLocationUpdates() }
-
     }
 
     private fun startLocationUpdates() {
@@ -101,7 +92,6 @@ class LocationFragment : Fragment() {
             locationCallback!!,
             Looper.getMainLooper()!!
         )
-        Log.d("TAG", "looper")
         isTracking = true
     }
 
@@ -128,14 +118,14 @@ class LocationFragment : Fragment() {
 
             arrondissementTextView!!.text = arrondissement.toString()
             arrondissementTextView!!.isEnabled = true
+
             val action = LocationFragmentDirections.actionLocationFragmentToFullScheduleFragment(arrondissement)
             arrondissementTextView!!.setOnClickListener { view -> view.findNavController().navigate(action)}
+            
             fusedLocationProviderClient!!.removeLocationUpdates(locationCallback!!)
         } catch (e: Exception) {
             arrondissementTextView!!.text = getString(R.string.location_unavailable)
         }
-
-
     }
 
     override fun onResume() {
