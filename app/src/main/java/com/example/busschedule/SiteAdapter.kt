@@ -13,7 +13,13 @@ class SiteAdapter(private val onItemClicked: (Site) -> Unit): ListAdapter<Site, 
 
     class SiteViewHolder(private var binding: SiteItemBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(site: Site) {
+
+                binding.siteIdTextView.text = site.siteId.toString()
                 binding.siteNameTextView.text = site.siteName
+                binding.siteArrondissementTextView.text = site.arrondissement.toString()
+                binding.siteUrlTextView.text = site.url
+                binding.siteImgFileTextView.text = site.imgFile
+                binding.siteNotesTextView.text = site.notes
         }
     }
 

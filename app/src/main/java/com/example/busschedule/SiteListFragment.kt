@@ -15,6 +15,8 @@
  */
 package com.example.busschedule
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -29,6 +31,7 @@ import com.example.busschedule.databinding.SiteListFragmentBinding
 import com.example.busschedule.viewmodels.SiteViewModel
 import com.example.busschedule.viewmodels.SiteViewModelFactory
 import kotlinx.coroutines.launch
+import java.net.URL
 
 class SiteListFragment: Fragment() {
 
@@ -68,7 +71,12 @@ class SiteListFragment: Fragment() {
 
         (activity as AppCompatActivity).supportActionBar?.title = "Sites"
 
-        val siteAdapter = SiteAdapter {}
+        val siteAdapter = SiteAdapter {
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.setData(Uri.parse(it.url))
+            startActivity(intent)
+
+        }
 
         recyclerView.adapter = siteAdapter
 
