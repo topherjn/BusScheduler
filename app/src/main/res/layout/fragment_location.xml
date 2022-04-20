@@ -12,7 +12,7 @@
         android:id="@+id/arrondissementTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="256dp"
+        android:layout_marginTop="164dp"
         android:textAlignment="center"
         android:textSize="200sp"
         app:layout_constraintEnd_toEndOf="parent"
