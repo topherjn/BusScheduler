@@ -1,13 +1,12 @@
 package com.example.busschedule
 
 import android.Manifest
-import android.location.Location
 import android.content.pm.PackageManager
 import android.location.Geocoder
+import android.location.Location
+import android.os.Build
 import android.os.Bundle
 import android.os.Looper
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +15,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.findNavController
 import com.google.android.gms.location.*
 
@@ -99,6 +100,7 @@ class LocationFragment : Fragment() {
         gpsButton!!.setText(R.string.start)
         gpsButton!!.setOnClickListener { startLocationUpdates() }
         fusedLocationProviderClient!!.removeLocationUpdates(locationCallback!!)
+        fusedLocationProviderClient = null
         isTracking = false
     }
 
@@ -116,13 +118,18 @@ class LocationFragment : Fragment() {
             var arrondissement = postalCode.toInt()
             if(arrondissement > 20) arrondissement = arrondissement.mod(20) + 1
 
+            //Toast.makeText(requireContext(), arrondissement.toString(), Toast.LENGTH_LONG).show()
+
             arrondissementTextView!!.text = arrondissement.toString()
             arrondissementTextView!!.isEnabled = true
 
             val action = LocationFragmentDirections.actionLocationFragmentToFullScheduleFragment(arrondissement)
             arrondissementTextView!!.setOnClickListener { view -> view.findNavController().navigate(action)}
-            
-            fusedLocationProviderClient!!.removeLocationUpdates(locationCallback!!)
+
+            val ft: FragmentTransaction = requireFragmentManager().beginTransaction()
+            ft.setReorderingAllowed(false)
+            ft.detach(this).attach(this).commit()
+
         } catch (e: Exception) {
             arrondissementTextView!!.text = getString(R.string.location_unavailable)
         }
