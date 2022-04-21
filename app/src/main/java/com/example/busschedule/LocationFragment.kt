@@ -22,7 +22,6 @@ import com.google.android.gms.location.*
 
 class LocationFragment : Fragment() {
 
-    private var gpsButton: Button? = null
     private var arrondissementTextView: TextView? = null
 
     private var fusedLocationProviderClient: FusedLocationProviderClient? = null
@@ -42,11 +41,13 @@ class LocationFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         (activity as AppCompatActivity).supportActionBar?.title = "Arrondissement"
-        gpsButton = requireView().findViewById(R.id.getLocationButton)
+
         arrondissementTextView = requireView().findViewById(R.id.arrondissementTextView)
         arrondissementTextView!!.text = null
 
-        gpsButton!!.setOnClickListener { startLocationUpdates() }
+        startLocationUpdates()
+
+
     }
 
     private fun startLocationUpdates() {
@@ -66,9 +67,6 @@ class LocationFragment : Fragment() {
                 }
             }
         }
-
-        gpsButton!!.setText(R.string.stop)
-        gpsButton!!.setOnClickListener { stopLocationUpdates() }
 
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
@@ -96,12 +94,13 @@ class LocationFragment : Fragment() {
         isTracking = true
     }
 
-    private fun stopLocationUpdates() {
-        gpsButton!!.setText(R.string.start)
-        gpsButton!!.setOnClickListener { startLocationUpdates() }
+    override fun onStop() {
+        super.onStop()
+
         fusedLocationProviderClient!!.removeLocationUpdates(locationCallback!!)
         fusedLocationProviderClient = null
         isTracking = false
+
     }
 
     private fun updateLocationTextBox(lastLocation: Location) {
