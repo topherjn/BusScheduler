@@ -91,16 +91,16 @@ class LocationFragment : Fragment() {
             locationCallback!!,
             Looper.getMainLooper()!!
         )
+
         isTracking = true
     }
 
-    override fun onStop() {
-        super.onStop()
-
-        fusedLocationProviderClient!!.removeLocationUpdates(locationCallback!!)
-        fusedLocationProviderClient = null
-        isTracking = false
-
+    private fun stopLocationUpdates() {
+        if(isTracking) {
+            fusedLocationProviderClient!!.removeLocationUpdates(locationCallback!!)
+            fusedLocationProviderClient = null
+            isTracking = false
+        }
     }
 
     private fun updateLocationTextBox(lastLocation: Location) {
@@ -117,7 +117,7 @@ class LocationFragment : Fragment() {
             var arrondissement = postalCode.toInt()
             if(arrondissement > 20) arrondissement = arrondissement.mod(20) + 1
 
-            //Toast.makeText(requireContext(), arrondissement.toString(), Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), postalCode.toString(), Toast.LENGTH_LONG).show()
 
             arrondissementTextView!!.text = arrondissement.toString()
             arrondissementTextView!!.isEnabled = true
@@ -136,9 +136,21 @@ class LocationFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        if (isTracking) {
-            startLocationUpdates()
-        }
+
+        startLocationUpdates()
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        stopLocationUpdates()
+
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        stopLocationUpdates()
     }
 
     companion object {
