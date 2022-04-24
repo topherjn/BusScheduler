@@ -32,6 +32,7 @@ import com.example.busschedule.viewmodels.SiteViewModel
 import com.example.busschedule.viewmodels.SiteViewModelFactory
 import kotlinx.coroutines.launch
 import java.net.URL
+import kotlin.random.Random
 
 class SiteListFragment: Fragment() {
 
@@ -41,7 +42,7 @@ class SiteListFragment: Fragment() {
 
     private lateinit var recyclerView: RecyclerView
 
-    private  var arrondissement: Int = 0
+    private var arrondissement: Int = 0
 
     private val viewModel: SiteViewModel by activityViewModels {
         SiteViewModelFactory((activity?.application as SiteApplication).database.siteDao())
@@ -75,7 +76,6 @@ class SiteListFragment: Fragment() {
             val intent = Intent(Intent.ACTION_VIEW)
             intent.setData(Uri.parse(it.url))
             startActivity(intent)
-
         }
 
         recyclerView.adapter = siteAdapter
