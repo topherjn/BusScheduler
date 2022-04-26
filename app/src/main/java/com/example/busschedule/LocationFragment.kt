@@ -1,37 +1,45 @@
 package com.example.busschedule
 
 import android.Manifest
+import android.annotation.SuppressLint
 
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.findNavController
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.*
 
 
 class LocationFragment : Fragment() {
 
     private var arrondissementTextView: TextView? = null
 
-    private var fusedLocationProviderClient: FusedLocationProviderClient? = null
+    private var client: FusedLocationProviderClient? = null
     private var locationRequest: LocationRequest? = null
     private var locationCallback: LocationCallback? = null
     private var isTracking = false
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        if (hasLocationPermission()) {
+            startLocationUpdates()
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,58 +59,31 @@ class LocationFragment : Fragment() {
 
         startLocationUpdates()
 
-
     }
 
     private fun startLocationUpdates() {
 
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext())
         locationRequest = LocationRequest.create()
         locationRequest!!.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         locationRequest!!.interval = 5000
         locationRequest!!.fastestInterval = 1000
-        locationRequest!!.isWaitForAccurateLocation = true
-        locationRequest!!.smallestDisplacement = 0f
 
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 for (location in locationResult.locations) {
-                    updateLocationTextBox(location)
+
+                    //updateLocationTextBox(location)
+                    Log.d(TAG,"Location: $location")
                 }
             }
         }
-
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            requestPermissions(
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ), PERMISSION_REQUEST_CODE
-            )
-            Toast.makeText(requireContext(), "Need to grant location permissions", Toast.LENGTH_LONG).show()
-            return
-        }
-
-        fusedLocationProviderClient!!.requestLocationUpdates(
-            locationRequest!!,
-            locationCallback!!,
-            Looper.getMainLooper()!!
-        )
-
-        isTracking = true
+        client = LocationServices.getFusedLocationProviderClient(requireContext())
     }
 
     private fun stopLocationUpdates() {
         if(isTracking) {
-            fusedLocationProviderClient!!.removeLocationUpdates(locationCallback!!)
-            fusedLocationProviderClient = null
+            client!!.removeLocationUpdates(locationCallback!!)
+            client = null
             isTracking = false
         }
     }
@@ -137,10 +118,13 @@ class LocationFragment : Fragment() {
         }
     }
 
+    @SuppressLint("MissingPermission")
     override fun onResume() {
         super.onResume()
-
-        startLocationUpdates()
+        if (hasLocationPermission()) {
+            client?.requestLocationUpdates(
+                locationRequest!!, locationCallback!!, Looper.getMainLooper())
+        }
     }
 
     override fun onPause() {
@@ -149,19 +133,30 @@ class LocationFragment : Fragment() {
         stopLocationUpdates()
     }
 
-    override fun onStop() {
-        super.onStop()
+    private fun hasLocationPermission(): Boolean {
 
-        stopLocationUpdates()
+        // Request fine location permission if not already granted
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_DENIED
+        ) {
+            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            return false
+        }
+        return true
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-
-        stopLocationUpdates()
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            stopLocationUpdates()
+        }
     }
 
     companion object {
         private const val PERMISSION_REQUEST_CODE = 200
+        const val TAG = "LOCATION"
     }
 }
