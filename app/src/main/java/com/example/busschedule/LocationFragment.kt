@@ -34,6 +34,7 @@ class LocationFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        Toast.makeText(requireContext(),"onCreateView",Toast.LENGTH_LONG).show()
         return inflater.inflate(R.layout.fragment_location, container, false)
     }
 
@@ -46,19 +47,18 @@ class LocationFragment : Fragment() {
 
         arrondissementTextView!!.isEnabled = false
 
-        if (hasLocationPermission()) {
-            Toast.makeText(requireContext(),"Tracking",Toast.LENGTH_LONG).show()
-            trackLocation()
-        }
+        Toast.makeText(requireContext(),"onViewCreated",Toast.LENGTH_LONG).show()
     }
 
     private fun hasLocationPermission(): Boolean {
 
         // Request fine location permission if not already granted
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_DENIED
+        if (getContext()?.let {
+                ContextCompat.checkSelfPermission(
+                    it,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+            } == PackageManager.PERMISSION_DENIED
         ) {
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
             return false
@@ -68,8 +68,8 @@ class LocationFragment : Fragment() {
     }
 
     private fun getArrondissement(location: Location) : Int {
-        val geocoder = Geocoder(requireContext())
-        var arrondissement = -1
+        val geocoder = Geocoder(getContext())
+        var arrondissement : Int
 
         try {
             val addresses =
@@ -86,7 +86,7 @@ class LocationFragment : Fragment() {
             return arrondissement
 
         } catch (e: Exception) {
-            return arrondissement
+            return -1
         }
     }
 
@@ -100,15 +100,18 @@ class LocationFragment : Fragment() {
 
     private fun trackLocation() {
 
+        Toast.makeText(requireContext(),"Tracking",Toast.LENGTH_LONG).show()
+
         locationRequest = LocationRequest.create()
             .setInterval(5000)
             .setFastestInterval(3000)
             .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
 
+
         locationCallback = object: LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 super.onLocationResult(locationResult)
-
+                Toast.makeText(requireContext(),"LocationResult",Toast.LENGTH_LONG).show()
                 for(location in locationResult.locations) {
                     val arrondissement = getArrondissement(location).toString()
                     arrondissementTextView!!.text = arrondissement
@@ -119,7 +122,7 @@ class LocationFragment : Fragment() {
             }
         }
 
-        client = LocationServices.getFusedLocationProviderClient(requireActivity())
+        client = getContext()?.let { LocationServices.getFusedLocationProviderClient(it) }
 
         requestLocation()
 
@@ -128,10 +131,13 @@ class LocationFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         client?.removeLocationUpdates(locationCallback!!)
+        client = null
     }
 
     @SuppressLint("MissingPermission")
     private fun requestLocation() {
+        Toast.makeText(requireContext(), "request", Toast.LENGTH_LONG).show()
+
         if (hasLocationPermission()) {
             client?.requestLocationUpdates(
                 locationRequest!!, locationCallback!!, Looper.getMainLooper())
@@ -141,6 +147,6 @@ class LocationFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        requestLocation()
+        trackLocation()
     }
 }
