@@ -1,6 +1,7 @@
 package com.example.busschedule
 
 import android.Manifest
+import android.annotation.SuppressLint
 
 import android.content.pm.PackageManager
 import android.location.Geocoder
@@ -12,26 +13,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.findNavController
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.*
 
 
 class LocationFragment : Fragment() {
 
-    private var arrondissementTextView: TextView? = null
+    private var client: FusedLocationProviderClient?= null
+    private var locationRequest: LocationRequest?= null
+    private var locationCallback: LocationCallback?= null
 
-    private var fusedLocationProviderClient: FusedLocationProviderClient? = null
-    private var locationRequest: LocationRequest? = null
-    private var locationCallback: LocationCallback? = null
-    private var isTracking = false
+    private var arrondissementTextView: TextView?= null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,121 +43,104 @@ class LocationFragment : Fragment() {
         (activity as AppCompatActivity).supportActionBar?.title = "Arrondissement"
 
         arrondissementTextView = requireView().findViewById(R.id.arrondissementTextView)
-        arrondissementTextView!!.text = null
 
-        startLocationUpdates()
+        arrondissementTextView!!.isEnabled = false
 
-
+        if (hasLocationPermission()) {
+            Toast.makeText(requireContext(),"Tracking",Toast.LENGTH_LONG).show()
+            trackLocation()
+        }
     }
 
-    private fun startLocationUpdates() {
+    private fun hasLocationPermission(): Boolean {
 
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext())
-        locationRequest = LocationRequest.create()
-        locationRequest!!.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        locationRequest!!.interval = 5000
-        locationRequest!!.fastestInterval = 1000
-        locationRequest!!.isWaitForAccurateLocation = true
-        locationRequest!!.smallestDisplacement = 0f
-
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                for (location in locationResult.locations) {
-                    updateLocationTextBox(location)
-                }
-            }
-        }
-
-        if (ActivityCompat.checkSelfPermission(
+        // Request fine location permission if not already granted
+        if (ContextCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
+            ) == PackageManager.PERMISSION_DENIED
         ) {
-            requestPermissions(
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ), PERMISSION_REQUEST_CODE
-            )
-            Toast.makeText(requireContext(), "Need to grant location permissions", Toast.LENGTH_LONG).show()
-            return
+            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            return false
         }
 
-        fusedLocationProviderClient!!.requestLocationUpdates(
-            locationRequest!!,
-            locationCallback!!,
-            Looper.getMainLooper()!!
-        )
-
-        isTracking = true
+        return true
     }
 
-    private fun stopLocationUpdates() {
-        if(isTracking) {
-            fusedLocationProviderClient!!.removeLocationUpdates(locationCallback!!)
-            fusedLocationProviderClient = null
-            isTracking = false
-        }
-    }
-
-    private fun updateLocationTextBox(lastLocation: Location) {
-        val geocoder = Geocoder(getContext())
+    private fun getArrondissement(location: Location) : Int {
+        val geocoder = Geocoder(requireContext())
+        var arrondissement = -1
 
         try {
             val addresses =
-                geocoder.getFromLocation(lastLocation.latitude, lastLocation.longitude, 1)
+                geocoder.getFromLocation(location.latitude, location.longitude, 1)
             var postalCode = addresses[0].postalCode
             Toast.makeText(requireContext(), postalCode.toString(), Toast.LENGTH_LONG).show()
             if (postalCode.length > 1) {
                 postalCode = postalCode.substring(postalCode.length - 2)
                 if (postalCode[0] == '0') postalCode = postalCode.substring(postalCode.length - 1)
             }
-            var arrondissement = postalCode.toInt()
+            arrondissement = postalCode.toInt()
             if(arrondissement > 20) arrondissement = arrondissement.mod(20) + 1
 
-            arrondissementTextView!!.text = arrondissement.toString()
-            arrondissementTextView!!.isEnabled = true
-
-            val action = LocationFragmentDirections.actionLocationFragmentToFullScheduleFragment(arrondissement)
-            arrondissementTextView!!.setOnClickListener { view -> view.findNavController().navigate(action)}
-
-            val ft: FragmentTransaction = requireFragmentManager().beginTransaction()
-            ft.setReorderingAllowed(false)
-            ft.detach(this).attach(this).commit()
+            return arrondissement
 
         } catch (e: Exception) {
-            arrondissementTextView!!.text = getString(R.string.location_unavailable)
+            return arrondissement
+        }
+    }
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            trackLocation()
+        }
+    }
+
+    private fun trackLocation() {
+
+        locationRequest = LocationRequest.create()
+            .setInterval(5000)
+            .setFastestInterval(3000)
+            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+
+        locationCallback = object: LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                super.onLocationResult(locationResult)
+
+                for(location in locationResult.locations) {
+                    val arrondissement = getArrondissement(location).toString()
+                    arrondissementTextView!!.text = arrondissement
+                    val action = LocationFragmentDirections.actionLocationFragmentToFullScheduleFragment(arrondissement.toInt())
+                    arrondissementTextView!!.setOnClickListener { view -> view.findNavController().navigate(action) }
+                    arrondissementTextView!!.isEnabled = true
+                }
+            }
+        }
+
+        client = LocationServices.getFusedLocationProviderClient(requireActivity())
+
+        requestLocation()
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+        client?.removeLocationUpdates(locationCallback!!)
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun requestLocation() {
+        if (hasLocationPermission()) {
+            client?.requestLocationUpdates(
+                locationRequest!!, locationCallback!!, Looper.getMainLooper())
         }
     }
 
     override fun onResume() {
         super.onResume()
 
-        startLocationUpdates()
-    }
-
-    override fun onPause() {
-        super.onPause()
-
-        stopLocationUpdates()
-    }
-
-    override fun onStop() {
-        super.onStop()
-
-        stopLocationUpdates()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        stopLocationUpdates()
-    }
-
-    companion object {
-        private const val PERMISSION_REQUEST_CODE = 200
+        requestLocation()
     }
 }
