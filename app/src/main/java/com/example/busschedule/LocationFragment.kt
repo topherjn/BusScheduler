@@ -50,14 +50,6 @@ class LocationFragment : Fragment() {
         arrondissementTextView!!.text = null
 
         setUpLocationUpdates()
-
-
-    }
-
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        super.onViewStateRestored(savedInstanceState)
-
-        setUpLocationUpdates()
     }
 
     private fun setUpLocationUpdates() {
@@ -80,6 +72,9 @@ class LocationFragment : Fragment() {
             }
         }
 
+        fusedLocationProviderClient!!.lastLocation
+            .addOnSuccessListener { location: Location? -> updateLocationTextBox(location!!) }
+
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -97,13 +92,6 @@ class LocationFragment : Fragment() {
             Toast.makeText(requireContext(), "Need to grant location permissions", Toast.LENGTH_LONG).show()
             return
         }
-
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        setUpLocationUpdates()
     }
 
     private fun stopLocationUpdates() {
@@ -150,6 +138,14 @@ class LocationFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        stopLocationUpdates()
+
     }
 
     companion object {
