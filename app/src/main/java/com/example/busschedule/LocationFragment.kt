@@ -1,6 +1,7 @@
 package com.example.busschedule
 
 import android.Manifest
+import android.annotation.SuppressLint
 
 import android.content.pm.PackageManager
 import android.location.Geocoder
@@ -15,7 +16,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.findNavController
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -49,12 +49,20 @@ class LocationFragment : Fragment() {
         arrondissementTextView = requireView().findViewById(R.id.arrondissementTextView)
         arrondissementTextView!!.text = null
 
-        startLocationUpdates()
+        setUpLocationUpdates()
 
 
     }
 
-    private fun startLocationUpdates() {
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+
+        setUpLocationUpdates()
+    }
+
+    private fun setUpLocationUpdates() {
+
+        Toast.makeText(requireContext(), "StartLocation", Toast.LENGTH_SHORT).show()
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext())
         locationRequest = LocationRequest.create()
@@ -90,13 +98,12 @@ class LocationFragment : Fragment() {
             return
         }
 
-        fusedLocationProviderClient!!.requestLocationUpdates(
-            locationRequest!!,
-            locationCallback!!,
-            Looper.getMainLooper()!!
-        )
+    }
 
-        isTracking = true
+    override fun onStart() {
+        super.onStart()
+
+        setUpLocationUpdates()
     }
 
     private fun stopLocationUpdates() {
@@ -107,7 +114,14 @@ class LocationFragment : Fragment() {
         }
     }
 
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("SAVEDTEXT", arrondissementTextView!!.text.toString())
+    }
+
     private fun updateLocationTextBox(lastLocation: Location) {
+        Toast.makeText(requireContext(), "updateLocationTextBox", Toast.LENGTH_SHORT).show()
         val geocoder = Geocoder(getContext())
 
         try {
@@ -128,37 +142,14 @@ class LocationFragment : Fragment() {
             val action = LocationFragmentDirections.actionLocationFragmentToFullScheduleFragment(arrondissement)
             arrondissementTextView!!.setOnClickListener { view -> view.findNavController().navigate(action)}
 
-            val ft: FragmentTransaction = requireFragmentManager().beginTransaction()
-            ft.setReorderingAllowed(false)
-            ft.detach(this).attach(this).commit()
-
         } catch (e: Exception) {
-            arrondissementTextView!!.text = getString(R.string.location_unavailable)
+            Toast.makeText(requireContext(), e.message, Toast.LENGTH_SHORT).show()
+            arrondissementTextView!!.text = e.message
         }
     }
 
     override fun onResume() {
         super.onResume()
-
-        startLocationUpdates()
-    }
-
-    override fun onPause() {
-        super.onPause()
-
-        stopLocationUpdates()
-    }
-
-    override fun onStop() {
-        super.onStop()
-
-        stopLocationUpdates()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        stopLocationUpdates()
     }
 
     companion object {
