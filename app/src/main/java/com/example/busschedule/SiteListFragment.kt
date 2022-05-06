@@ -21,10 +21,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.coroutineScope
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.busschedule.databinding.SiteListFragmentBinding
@@ -85,6 +87,10 @@ class SiteListFragment: Fragment() {
                 siteAdapter.submitList(it)
             }
         }
+
+        val action = SiteListFragmentDirections.actionFullScheduleFragmentToInsertSiteFragment(arrondissement)
+        val insertButton = binding.insertButton
+        insertButton!!.setOnClickListener {view -> view.findNavController().navigate(action)}
     }
 
     override fun onDestroyView() {

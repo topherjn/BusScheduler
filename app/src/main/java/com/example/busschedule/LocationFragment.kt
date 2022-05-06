@@ -54,7 +54,7 @@ class LocationFragment : Fragment() {
 
     private fun setUpLocationUpdates() {
 
-        Toast.makeText(requireContext(), "StartLocation", Toast.LENGTH_SHORT).show()
+        //Toast.makeText(requireContext(), "StartLocation", Toast.LENGTH_SHORT).show()
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext())
         locationRequest = LocationRequest.create()
@@ -89,7 +89,7 @@ class LocationFragment : Fragment() {
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 ), PERMISSION_REQUEST_CODE
             )
-            Toast.makeText(requireContext(), "Need to grant location permissions", Toast.LENGTH_LONG).show()
+            //Toast.makeText(requireContext(), "Need to grant location permissions", Toast.LENGTH_LONG).show()
             return
         }
     }
@@ -109,14 +109,14 @@ class LocationFragment : Fragment() {
     }
 
     private fun updateLocationTextBox(lastLocation: Location) {
-        Toast.makeText(requireContext(), "updateLocationTextBox", Toast.LENGTH_SHORT).show()
+       //Toast.makeText(requireContext(), "updateLocationTextBox", Toast.LENGTH_SHORT).show()
         val geocoder = Geocoder(getContext())
 
         try {
             val addresses =
                 geocoder.getFromLocation(lastLocation.latitude, lastLocation.longitude, 1)
             var postalCode = addresses[0].postalCode
-            Toast.makeText(requireContext(), postalCode.toString(), Toast.LENGTH_LONG).show()
+            //Toast.makeText(requireContext(), postalCode.toString(), Toast.LENGTH_LONG).show()
             if (postalCode.length > 1) {
                 postalCode = postalCode.substring(postalCode.length - 2)
                 if (postalCode[0] == '0') postalCode = postalCode.substring(postalCode.length - 1)
@@ -131,7 +131,7 @@ class LocationFragment : Fragment() {
             arrondissementTextView!!.setOnClickListener { view -> view.findNavController().navigate(action)}
 
         } catch (e: Exception) {
-            Toast.makeText(requireContext(), e.message, Toast.LENGTH_SHORT).show()
+            //Toast.makeText(requireContext(), e.message, Toast.LENGTH_SHORT).show()
             arrondissementTextView!!.text = e.message
         }
     }

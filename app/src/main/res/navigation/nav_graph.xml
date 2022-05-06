@@ -35,6 +35,19 @@
         <argument
             android:name="arrondissement"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_fullScheduleFragment_to_insertSiteFragment"
+            app:destination="@id/insertSiteFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/insertSiteFragment"
+        android:name="com.example.busschedule.InsertSiteFragment"
+        android:label="insert_site_fragment"
+        tools:layout="@layout/insert_site_fragment" >
+
+        <argument
+            android:name="arrondissement"
+            app:argType="integer" />
     </fragment>
 
 </navigation>
