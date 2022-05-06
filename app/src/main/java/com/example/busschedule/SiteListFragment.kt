@@ -21,7 +21,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -33,8 +32,6 @@ import com.example.busschedule.databinding.SiteListFragmentBinding
 import com.example.busschedule.viewmodels.SiteViewModel
 import com.example.busschedule.viewmodels.SiteViewModelFactory
 import kotlinx.coroutines.launch
-import java.net.URL
-import kotlin.random.Random
 
 class SiteListFragment: Fragment() {
 
@@ -90,7 +87,7 @@ class SiteListFragment: Fragment() {
 
         val action = SiteListFragmentDirections.actionFullScheduleFragmentToInsertSiteFragment(arrondissement)
         val insertButton = binding.insertButton
-        insertButton!!.setOnClickListener {view -> view.findNavController().navigate(action)}
+        insertButton.setOnClickListener { it.findNavController().navigate(action)}
     }
 
     override fun onDestroyView() {
