@@ -8,12 +8,17 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.coroutineScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.busschedule.database.Site
 import com.example.busschedule.databinding.InsertSiteFragmentBinding
 import com.example.busschedule.viewmodels.SiteViewModel
 import com.example.busschedule.viewmodels.SiteViewModelFactory
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectIndexed
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.launch
 
 class InsertSiteFragment : Fragment() {
 
@@ -40,6 +45,24 @@ class InsertSiteFragment : Fragment() {
 
         (activity as AppCompatActivity).supportActionBar?.title = "Insert New Site"
 
+        lifecycle.coroutineScope.launch {
+            viewModel.getSite(siteId = arrondissement).collect() {
+                var site = it.get(0)
+
+                var siteNameEdit = binding.siteName
+                siteNameEdit.setText(site.siteName)
+
+                var siteUrlEdit = binding.url
+                siteUrlEdit.setText(site.url)
+
+                var notesEditText = binding.notes
+                notesEditText.setText(site.notes)
+            }
+        }
+
+
+
+
         val arrondissementEdit = binding.arrondissementEditText
         arrondissementEdit.setText(arrondissement.toString())
     }
@@ -50,7 +73,7 @@ class InsertSiteFragment : Fragment() {
     ): View {
         _binding = InsertSiteFragmentBinding.inflate(inflater, container, false)
 
-        val submitButton = binding.submitSite
+        val submitButton = binding.editSiteButton
         submitButton.setOnClickListener {addSite()}
 
         return binding.root

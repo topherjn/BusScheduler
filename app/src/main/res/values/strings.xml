@@ -30,5 +30,6 @@
     <string name="url">Url</string>
     <string name="notes">Notes</string>
     <string name="cancel">Cancel</string>
-    <string name="submit">Submit</string>
+    <string name="edit">Edit</string>
+    <string name="view_map">View Map</string>
 </resources>

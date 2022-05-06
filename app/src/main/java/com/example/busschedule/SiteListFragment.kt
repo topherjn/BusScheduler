@@ -26,6 +26,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.coroutineScope
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.busschedule.databinding.SiteListFragmentBinding
@@ -72,10 +73,16 @@ class SiteListFragment: Fragment() {
         (activity as AppCompatActivity).supportActionBar?.title = "Sites"
 
         val siteAdapter = SiteAdapter {
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.setData(Uri.parse(it.url))
-            startActivity(intent)
+            var siteId = it.siteId
+            val action = SiteListFragmentDirections.actionFullScheduleFragmentToInsertSiteFragment(siteId)
+            findNavController().navigate(action)
         }
+
+//        val siteAdapter = SiteAdapter {
+//            val intent = Intent(Intent.ACTION_VIEW)
+//            intent.setData(Uri.parse(it.url))
+//            startActivity(intent)
+//        }
 
         recyclerView.adapter = siteAdapter
 

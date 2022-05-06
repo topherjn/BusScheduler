@@ -13,6 +13,8 @@ class SiteViewModel(private val siteDao: SiteDao): ViewModel() {
 
     fun getSites(arrondissement: Int): Flow<List<Site>> = siteDao.getSitesByArrondissement(arrondissement)
 
+    fun getSite(siteId: Int): Flow<List<Site>> = siteDao.getSiteBySiteId(siteId)
+
     fun insertSite(
         siteId: Int,
         siteName: String,

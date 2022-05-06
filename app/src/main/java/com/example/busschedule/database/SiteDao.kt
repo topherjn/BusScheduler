@@ -8,6 +8,9 @@ interface SiteDao {
     @Query("SELECT * FROM site WHERE arrondissement = :arrondissement ORDER BY site_name")
     fun getSitesByArrondissement(arrondissement: Int): Flow<List<Site>>
 
+    @Query("SELECT * FROM site WHERE siteId = :siteId")
+    fun getSiteBySiteId(siteId: Int): Flow<List<Site>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSite(site: Site)
 
