@@ -9,11 +9,11 @@ interface SiteDao {
     fun getSitesByArrondissement(arrondissement: Int): Flow<List<Site>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertSite(site: Site)
+    suspend fun insertSite(site: Site)
 
     @Update
-    fun updateSite(site: Site)
+    suspend fun updateSite(site: Site)
 
     @Delete
-    fun delete(site: Site)
+    suspend fun delete(site: Site)
 }

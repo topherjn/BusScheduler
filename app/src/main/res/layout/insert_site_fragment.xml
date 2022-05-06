@@ -8,59 +8,42 @@
     tools:context=".InsertSiteFragment">
 
 
+    <Button
+        android:id="@+id/submit_site"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="168dp"
+        android:layout_marginBottom="220dp"
+        android:text="@string/submit"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/url"
+        app:layout_constraintVertical_bias="0.253" />
+
     <EditText
         android:id="@+id/notes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="8dp"
         android:ems="10"
         android:hint="@string/notes"
-        android:inputType="text"
-        android:maxLines="2"
-        android:minHeight="48dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/arrondissementEditText"
-        android:importantForAutofill="no" />
-
-    <EditText
-        android:id="@+id/url"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:ems="10"
-        android:hint="@string/url"
-        android:inputType="textUri"
-        android:maxLines="2"
-        android:minHeight="48dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/notes"
-        android:importantForAutofill="no" />
-
-    <EditText
-        android:id="@+id/site_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="192dp"
-        android:ems="10"
-        android:hint="@string/site_name"
         android:importantForAutofill="no"
         android:inputType="text"
         android:maxLines="2"
         android:minHeight="48dp"
-        android:textColorHint="#757575"
+        app:layout_constraintBottom_toTopOf="@+id/url"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/arrondissementEditText" />
 
     <EditText
         android:id="@+id/arrondissementEditText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="8dp"
         android:ems="10"
         android:hint="@string/arrondissement"
         android:importantForAutofill="no"
@@ -68,30 +51,45 @@
         android:maxLines="2"
         android:minHeight="48dp"
         android:textColorHint="#757575"
+        app:layout_constraintBottom_toTopOf="@+id/notes"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/site_name" />
 
-    <Button
-        android:id="@+id/cancel_insert"
+    <EditText
+        android:id="@+id/site_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/cancel"
-        app:layout_constraintEnd_toStartOf="@+id/submit_site"
-        app:layout_constraintHorizontal_bias="0.564"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/url" />
-
-    <Button
-        android:id="@+id/submit_site"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="72dp"
-        android:layout_marginBottom="220dp"
-        android:text="@string/submit"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="188dp"
+        android:ems="10"
+        android:hint="@string/site_name"
+        android:importantForAutofill="no"
+        android:inputType="text"
+        android:maxLines="2"
+        android:minHeight="48dp"
+        android:textColorHint="#757575"
+        app:layout_constraintBottom_toTopOf="@+id/arrondissementEditText"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/url"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/url"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:ems="10"
+        android:hint="@string/url"
+        android:importantForAutofill="no"
+        android:inputType="textUri"
+        android:maxLines="2"
+        android:minHeight="48dp"
+        app:layout_constraintBottom_toTopOf="@+id/submit_site"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/notes" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
