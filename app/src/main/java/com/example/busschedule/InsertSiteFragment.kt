@@ -1,23 +1,19 @@
 package com.example.busschedule
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.coroutineScope
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-import com.example.busschedule.database.Site
 import com.example.busschedule.databinding.InsertSiteFragmentBinding
 import com.example.busschedule.viewmodels.SiteViewModel
 import com.example.busschedule.viewmodels.SiteViewModelFactory
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectIndexed
-import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 
 class InsertSiteFragment : Fragment() {
@@ -26,7 +22,7 @@ class InsertSiteFragment : Fragment() {
 
     private val binding get() = _binding!!
 
-    private var arrondissement: Int = 0
+    private var siteId: Int = 0
 
     private val viewModel: SiteViewModel by activityViewModels {
         SiteViewModelFactory((activity?.application as SiteApplication).database.siteDao())
@@ -36,7 +32,7 @@ class InsertSiteFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         arguments?.let {
-            arrondissement = it.getInt("arrondissement")
+            siteId = it.getInt("arrondissement")
         }
     }
 
@@ -46,25 +42,25 @@ class InsertSiteFragment : Fragment() {
         (activity as AppCompatActivity).supportActionBar?.title = "Insert New Site"
 
         lifecycle.coroutineScope.launch {
-            viewModel.getSite(siteId = arrondissement).collect() {
-                var site = it.get(0)
+            viewModel.getSite(siteId = siteId).collect() {
+                val site = it.get(0)
 
-                var siteNameEdit = binding.siteName
+                val siteNameEdit = binding.siteName
                 siteNameEdit.setText(site.siteName)
 
-                var siteUrlEdit = binding.url
+                val arrondissementEdit = binding.arrondissementEditText
+                arrondissementEdit.setText(site.arrondissement.toString())
+
+                val siteUrlEdit = binding.url
                 siteUrlEdit.setText(site.url)
 
-                var notesEditText = binding.notes
+                val notesEditText = binding.notes
                 notesEditText.setText(site.notes)
+
+                val viewMapButton = binding.viewMapButton
+                viewMapButton.setOnClickListener { viewMap(site.url!!) }
             }
         }
-
-
-
-
-        val arrondissementEdit = binding.arrondissementEditText
-        arrondissementEdit.setText(arrondissement.toString())
     }
 
     override fun onCreateView(
@@ -93,6 +89,11 @@ class InsertSiteFragment : Fragment() {
         findNavController().navigate(action)
     }
 
+    private fun viewMap(url: String) {
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.setData(Uri.parse(url))
+        startActivity(intent)
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
