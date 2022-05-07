@@ -29,6 +29,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.busschedule.database.Site
 import com.example.busschedule.databinding.SiteListFragmentBinding
 import com.example.busschedule.viewmodels.SiteViewModel
 import com.example.busschedule.viewmodels.SiteViewModelFactory
@@ -73,12 +74,10 @@ class SiteListFragment: Fragment() {
         (activity as AppCompatActivity).supportActionBar?.title = "Sites"
 
         val siteAdapter = SiteAdapter {
-            var siteId = it.siteId
+            val siteId = it.siteId
             val action = SiteListFragmentDirections.actionFullScheduleFragmentToInsertSiteFragment(siteId)
             findNavController().navigate(action)
         }
-
-
 
         recyclerView.adapter = siteAdapter
 
@@ -88,7 +87,8 @@ class SiteListFragment: Fragment() {
             }
         }
 
-        val action = SiteListFragmentDirections.actionFullScheduleFragmentToInsertSiteFragment(arrondissement)
+        val action =
+            SiteListFragmentDirections.actionFullScheduleFragmentToInsertSiteFragment(arrondissement)
         val insertButton = binding.insertButton
         insertButton.setOnClickListener { it.findNavController().navigate(action)}
     }

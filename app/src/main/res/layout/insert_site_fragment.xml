@@ -28,37 +28,6 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
-        android:id="@+id/notes"
-        android:layout_width="358dp"
-        android:layout_height="383dp"
-        android:layout_marginTop="4dp"
-        android:ems="10"
-        android:hint="@string/notes"
-        android:importantForAutofill="no"
-        android:inputType="text"
-        android:maxLines="2"
-        android:minHeight="48dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.49"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/url" />
-
-    <EditText
-        android:id="@+id/url"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="1dp"
-        android:ems="10"
-        android:hint="@string/url"
-        android:importantForAutofill="no"
-        android:inputType="textUri"
-        android:maxLines="2"
-        android:minHeight="48dp"
-        app:layout_constraintEnd_toEndOf="@+id/arrondissementEditText"
-        app:layout_constraintTop_toBottomOf="@+id/arrondissementEditText" />
-
-    <EditText
         android:id="@+id/arrondissementEditText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -66,12 +35,29 @@
         android:ems="10"
         android:hint="@string/arrondissement"
         android:importantForAutofill="no"
-        android:inputType="text"
+        android:inputType="numberSigned|text"
         android:maxLines="2"
         android:minHeight="48dp"
         android:textColorHint="#757575"
         app:layout_constraintStart_toStartOf="@+id/site_name"
         app:layout_constraintTop_toBottomOf="@+id/site_name" />
+
+    <EditText
+        android:id="@+id/notes"
+        android:layout_width="360dp"
+        android:layout_height="487dp"
+        android:layout_marginTop="4dp"
+        android:ems="10"
+        android:hint="@string/notes"
+        android:importantForAutofill="no"
+        android:inputType="text"
+        android:maxLines="2"
+        android:minHeight="48dp"
+        android:gravity="top"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.49"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/arrondissementEditText" />
 
     <EditText
         android:id="@+id/site_name"

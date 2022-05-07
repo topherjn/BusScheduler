@@ -15,6 +15,10 @@ class SiteViewModel(private val siteDao: SiteDao): ViewModel() {
 
     fun getSite(siteId: Int): Flow<List<Site>> = siteDao.getSiteBySiteId(siteId)
 
+    fun updateSite(site: Site) {
+        viewModelScope.launch(Dispatchers.IO) {updateSite(site) }
+    }
+
     fun insertSite(
         siteId: Int,
         siteName: String,

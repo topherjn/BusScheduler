@@ -24,7 +24,7 @@
     <string name="stop">Stop</string>
     <string name="start">Start</string>
     <string name="location_unavailable">XX</string>
-    <string name="insert">Insert</string>
+    <string name="insert">Add Site</string>
     <string name="site_name">Site Name</string>
     <string name="arrondissement">Arrondissement</string>
     <string name="url">Url</string>
